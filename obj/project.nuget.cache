@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "OuxO6s89kGdyBTjUjtHFf5ZX2+Vq0S9JeREyxWYmoTopCQo/H1DNfGOAvAn5WjgIRWYdbnpqEb2eOfucQPvi8w==",
+  "success": true,
+  "projectFilePath": "/home/fokstal/Репозитории/SubUrl/SubUrl.csproj",
+  "expectedPackageFiles": [
+    "/home/fokstal/.nuget/packages/microsoft.netcore.app.ref/6.0.28/microsoft.netcore.app.ref.6.0.28.nupkg.sha512",
+    "/home/fokstal/.nuget/packages/microsoft.aspnetcore.app.ref/6.0.28/microsoft.aspnetcore.app.ref.6.0.28.nupkg.sha512",
+    "/home/fokstal/.nuget/packages/microsoft.netcore.app.host.linux-x64/6.0.28/microsoft.netcore.app.host.linux-x64.6.0.28.nupkg.sha512"
+  ],
+  "logs": []
+}
