@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SubUrl.Data;
 using SubUrl.Models;
+using SubUrl.Models.DTO;
 
 namespace SubUrl.Controllers
 {
@@ -22,6 +24,57 @@ namespace SubUrl.Controllers
 
                 return View(urlList);
             }
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(UrlDTO urlDTO)
+        {
+            if (!ModelState.IsValid) return View(urlDTO);
+
+            using (AppDbContext db = new())
+            {
+                await db.Url.AddAsync(new()
+                {
+                    LongValue = urlDTO.LongValue,
+                    ShortValue = urlDTO.LongValue.Length.ToString(),
+                    DateCreated = DateTime.Now,
+                });
+
+                await db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id is null || id < 1) return BadRequest();
+
+            using (AppDbContext db = new())
+            {
+                Url? url = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
+
+                if (url is null) return NotFound();
+
+                db.Url.Remove(url);
+
+                await db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }

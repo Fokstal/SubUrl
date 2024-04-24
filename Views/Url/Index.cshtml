@@ -93,7 +93,9 @@
 	}
 
 	function deleteItemBySelectedId() {
-		fetch('/Url/Delete/' + idSelectedItem);
+		fetch('/Url/Delete/' + idSelectedItem, {
+            method: "DELETE"
+        });
 
 		setInterval(func => { location.reload() }, 100);
 	}
