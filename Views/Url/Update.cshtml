@@ -4,46 +4,45 @@
     <div class="border p-3">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group row">
-            <h2 class="text-info pl-3">Update the Url</h2>
+            <h2 class="text-primary text-center pb-5">Update the Url</h2>
         </div>
         <div class="row">
             <div class="col-12">
                 <div class="form-group row py-2">
-                    <div class="col-3">
+                    <div class="offset-1 col-2 py-1">
                         <label asp-for="LongValue"></label>
                     </div>
-                    <div class="col-5">
+                    <div class="col-6">
                         <input asp-for="LongValue" class="form-control" />
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <span asp-validation-for="LongValue" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row py-2">
-                    <div class="col-3">
+                    <div class="offset-1 col-2 py-1">
                         <label asp-for="ShortValue"></label>
                     </div>
-                    <div class="col-5">
+                    <div class="col-6">
                         <input asp-for="ShortValue" class="form-control" />
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <span asp-validation-for="ShortValue" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row py-2">
-                    <div class="col-3">
+                    <div class="offset-1 col-2 py-1">
                         <label asp-for="DateCreated"></label>
                     </div>
-                    <div class="col-5">
+                    <div class="col-6">
                         <input asp-for="DateCreated" class="form-control" />
                     </div>
-                    <div class="col-4">
+                    <div class="col-3">
                         <span asp-validation-for="DateCreated" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="form-group row py-4">
-                    <div class="col-5 offset-3 row">
-
+                    <div class="col-4 offset-4 row">
                         <div class="col">
                             <button type="submit" class="btn btn-success w-100">
                                 <i class="fa-regular fa-circle-check"></i> &nbsp; Update
