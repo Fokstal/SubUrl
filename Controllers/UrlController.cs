@@ -33,22 +33,31 @@ namespace SubUrl.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] UrlDTO urlDTO)
+        public async Task<ActionResult<string>> Create([FromBody] UrlDTO urlDTO)
         {
-            if (!ModelState.IsValid) return View(urlDTO);
+            if (!ModelState.IsValid) return BadRequest("Link has been required!");
 
             using (AppDbContext db = new())
             {
+                Url? url = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.LongValue.ToLower() == urlDTO.LongValue.ToLower());
+
+                if (url is not null)
+                {
+                    db.Url.Remove(url);
+                }
+
+                string shortValue = urlDTO.LongValue.Length + new Random().Next(-10, 10) + "";
+
                 await db.Url.AddAsync(new()
                 {
                     LongValue = urlDTO.LongValue,
-                    ShortValue = urlDTO.LongValue.Length.ToString(),
+                    ShortValue = shortValue,
                     DateCreated = DateTime.Now,
                 });
 
                 await db.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return Created("Url", shortValue);
             }
         }
 

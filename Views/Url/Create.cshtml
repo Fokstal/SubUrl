@@ -1,51 +1,98 @@
 @model SubUrl.Models.DTO.UrlDTO
 
-<form method="post" asp-action="Create">
-    <div class="border p-3">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-        <div class="form-group row">
-            <h2 class="text-info pl-3">Add the Url</h2>
+<div class="border p-3">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group row">
+        <h2 class="text-info pl-3">Add the Url</h2>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="form-group row py-2">
+                <div class="col-3">
+                    <label asp-for="LongValue"></label>
+                </div>
+                <div class="col-6">
+                    <input id="longValueBox" asp-for="LongValue" class="form-control" />
+                </div>
+                <div class="col-3">
+                    <span asp-validation-for="LongValue" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row py-4">
+                <div class="offset-3 col-3">
+                    <input id="responseBox" class="form-control" readonly />
+                </div>
+                <div class="col-1">
+                    <button id="copyBtn" type="button" class="btn btn-outline-dark" onclick="copyToClipboardResponse()">
+                        <i class="fa-regular fa-clipboard"></i>
+                    </button>
+                </div>
+                <span id="afterCopyText" class="col-5 py-1" style="visibility: hidden;"></span>
+            </div>
+            <div class="form-group row py-4">
+                <div class="offset-4 col-4 row">
+                    <div class="col">
+                        <button type="button" class="btn btn-success w-100" onclick="createNewUrl()">
+                            <i class="fa-regular fa-circle-check"></i> &nbsp; Create
+                        </button>
+                    </div>
+                    <div class="col">
+                        <a asp-action="Index" class="btn btn-warning w-100">
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> &nbsp; Back
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="row">
-            <div class="col-12">
-                <div class="form-group row py-2">
-                    <div class="col-3">
-                        <label asp-for="LongValue"></label>
-                    </div>
-                    <div class="col-5">
-                        <input asp-for="LongValue" class="form-control"/>
-                    </div>
-                    <div class="col-4">
-                        <span asp-validation-for="LongValue" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="form-group row py-4">
-                    <div class="col-5 offset-3 row">
-
-                        <div class="col">
-                            <button type="submit" class="btn btn-success w-100">
-                                <i class="fa-regular fa-circle-check"></i> &nbsp; Create
-                            </button>
-                        </div>
-                        <div class="col">
-                            <a asp-action="Index" class="btn btn-warning w-100">
-                                <i class="fa-solid fa-arrow-right-from-bracket"></i> &nbsp; Back
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-4">
-                @* Keep this empty *@
-            </div>
+        <div class="col-4">
+            @* Keep this empty *@
         </div>
     </div>
-</form>
+</div>
 
 @section Scripts {
-
     @{
         <partial name="_ValidationScriptsPartial" />
     }
-
 }
+
+<script>
+    function createNewUrl() {
+        let longValue = document.querySelector("#longValueBox").value;
+
+        fetch("/Url/Create", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                "longValue": longValue,
+            }),
+        })
+            .then(resp => resp.text())
+            .then(data => {
+                document.querySelector("#responseBox").value = data;
+            })
+            .catch(err => {
+                document.querySelector("#responseBox").value = err;
+            })
+    }
+
+    function copyToClipboardResponse() {
+        navigator.clipboard.writeText(document.querySelector("#responseBox").value).then(function () {
+            showTextAfterCopyInTime("Link in clipboard!", 2000);
+        }, function (err) {
+            showTextAfterCopyInTime("Error!", 2000);
+        });
+    }
+
+    function showTextAfterCopyInTime(text, ms) {
+        let afterCopyTextSpan = document.querySelector("#afterCopyText");
+
+        afterCopyTextSpan.innerHTML = text;
+
+        afterCopyTextSpan.style.visibility = "visible";
+
+        setTimeout(() => afterCopyTextSpan.style.visibility = "hidden", ms)
+    }
+</script>
