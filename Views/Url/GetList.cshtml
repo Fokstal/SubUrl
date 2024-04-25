@@ -2,11 +2,11 @@
 
 <div class="container p-3">
 	<div class="row pt-4">
-		<div class="col-6">
+		<div class="col-5">
 			<h2 class="text-primary">Url List</h2>
 		</div>
-
-		<div class="col-6 text-end">
+		<span id="afterCopyText" class="col-2 text-center py-2" style="visibility: hidden;"></span>
+		<div class="col-5 text-end">
 			<a asp-action="Create" class="btn btn-primary">
 				<i class="fa-solid fa-plus"></i> &nbsp; Create a new Url
 			</a>
@@ -23,13 +23,13 @@
 					<th>
 						Value (long)
 					</th>
-                    <th>
+					<th>
 						Value (short)
 					</th>
-                    <th>
+					<th>
 						Created date
 					</th>
-                    <th>
+					<th>
 						Follow count
 					</th>
 					<th></th>
@@ -49,8 +49,13 @@
 								<a asp-action="Update" asp-route-id="@el.Id" class="btn btn-light mx-3">
 									<i class="fa-solid fa-pen-to-square"></i>
 								</a>
-								<a type="button" asp-route-id="@el.Id" class="btn btn-danger mx-3" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="selectItem(@el.Id)">
+								<a type="button" asp-route-id="@el.Id" class="btn btn-danger mx-3" data-bs-toggle="modal"
+									data-bs-target="#deleteModal" onclick="selectItem(@el.Id)">
 									<i class="fa-solid fa-trash-can"></i>
+								</a>
+								<a type="button" class="btn btn-outline-success mx-3"
+									onclick="copyToClipboardLinkByValue(@el.ShortValue)">
+									<i class="fa-regular fa-clipboard"></i>
 								</a>
 							</div>
 						</td>
@@ -76,7 +81,8 @@
 					</h5>
 				</div>
 				<div class="modal-footer justify-content-center">
-					<button type="button" class="btn btn-danger" onclick="deleteItemBySelectedId()" data-bs-dismiss="modal">Delete</button>
+					<button type="button" class="btn btn-danger" onclick="deleteItemBySelectedId()"
+						data-bs-dismiss="modal">Delete</button>
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				</div>
 			</div>
@@ -93,9 +99,27 @@
 
 	function deleteItemBySelectedId() {
 		fetch('/url/delete/?id=' + idSelectedItem, {
-            method: "DELETE"
-        });
+			method: "DELETE"
+		});
 
 		setInterval(func => { location.reload() }, 100);
 	}
+
+	function copyToClipboardLinkByValue(value) {
+		navigator.clipboard.writeText("https://localhost:7020/url/" + value).then(function () {
+			showTextAfterCopyInTime("Link in clipboard!", 2000);
+		}, function (err) {
+			showTextAfterCopyInTime("Error!", 2000);
+		});
+	}
+
+	function showTextAfterCopyInTime(text, ms) {
+        let afterCopyTextSpan = document.querySelector("#afterCopyText");
+
+        afterCopyTextSpan.innerHTML = text;
+
+        afterCopyTextSpan.style.visibility = "visible";
+
+        setTimeout(() => afterCopyTextSpan.style.visibility = "hidden", ms)
+    }
 </script>
