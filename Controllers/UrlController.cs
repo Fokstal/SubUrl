@@ -57,7 +57,7 @@ namespace SubUrl.Controllers
         [HttpPost("create")]
         public async Task<ActionResult<string>> Create([FromBody] UrlDTO urlDTO)
         {
-            if (!ModelState.IsValid) return BadRequest("Link has been required!");
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             using (AppDbContext db = new())
             {
@@ -79,7 +79,10 @@ namespace SubUrl.Controllers
 
                 await db.SaveChangesAsync();
 
-                return Created("Url", "https://localhost:7020/url/" + shortValue);
+                return Created("Url", new
+                {
+                    LongValue = new string[]  { "https://localhost:7020/url/" + shortValue },
+                });
             }
         }
 

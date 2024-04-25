@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="form-group row py-4">
-                <div class="offset-3 col-3">
+                <div class="offset-3 col-4">
                     <input id="responseBox" class="form-control" readonly />
                 </div>
                 <div class="col-1">
@@ -24,7 +24,7 @@
                         <i class="fa-regular fa-clipboard"></i>
                     </button>
                 </div>
-                <span id="afterCopyText" class="col-5 py-1" style="visibility: hidden;"></span>
+                <span id="afterCopyText" class="col-4 py-1" style="visibility: hidden;"></span>
             </div>
             <div class="form-group row py-4">
                 <div class="offset-4 col-4 row">
@@ -66,9 +66,20 @@
                 "longValue": longValue,
             }),
         })
-            .then(resp => resp.text())
+            .then(resp => resp.json())
             .then(data => {
-                document.querySelector("#responseBox").value = data;
+                let responseValue;
+
+                try
+                {
+                    responseValue = data.LongValue[0];
+                }
+                catch
+                {
+                    responseValue = data.longValue[0];
+                }
+
+                document.querySelector("#responseBox").value = responseValue;
             })
             .catch(err => {
                 document.querySelector("#responseBox").value = err;
