@@ -18,7 +18,7 @@ namespace SubUrl.Controllers
             _logger = logger;
         }
 
-        [HttpGet("{shortValue}")]
+        [HttpGet("{shortValue?}")]
         public async Task<IActionResult> Index(string? shortValue)
         {
             if (shortValue is null) return RedirectToAction(nameof(Create));
