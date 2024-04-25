@@ -33,7 +33,7 @@ namespace SubUrl.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UrlDTO urlDTO)
+        public async Task<IActionResult> Create([FromBody] UrlDTO urlDTO)
         {
             if (!ModelState.IsValid) return View(urlDTO);
 
@@ -45,6 +45,36 @@ namespace SubUrl.Controllers
                     ShortValue = urlDTO.LongValue.Length.ToString(),
                     DateCreated = DateTime.Now,
                 });
+
+                await db.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(int? id)
+        {
+            if (id is null || id < 1) return BadRequest();
+
+            using (AppDbContext db = new())
+            {
+                Url? urlToUpdate = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
+
+                if (urlToUpdate is null) return NotFound();
+
+                return View(urlToUpdate);
+            }
+        }
+
+        public async Task<IActionResult> Update(Url url)
+        {
+
+            if (!ModelState.IsValid) return View(url);
+
+            using (AppDbContext db = new())
+            {
+                db.Url.Update(url);
 
                 await db.SaveChangesAsync();
 
