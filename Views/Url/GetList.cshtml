@@ -46,10 +46,10 @@
 						<td width="10%">@el.FollowCount</td>
 						<td class="text-center">
 							<div class="w-30 btn-group" role="group">
-								<a asp-action="Update" asp-route-ID="@el.Id" class="btn btn-light mx-3">
+								<a asp-action="Update" asp-route-id="@el.Id" class="btn btn-light mx-3">
 									<i class="fa-solid fa-pen-to-square"></i>
 								</a>
-								<a type="button" asp-route-ID="@el.Id" class="btn btn-danger mx-3" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="selectItem(@el.Id)">
+								<a type="button" asp-route-id="@el.Id" class="btn btn-danger mx-3" data-bs-toggle="modal" data-bs-target="#deleteModal" onclick="selectItem(@el.Id)">
 									<i class="fa-solid fa-trash-can"></i>
 								</a>
 							</div>
@@ -92,7 +92,7 @@
 	}
 
 	function deleteItemBySelectedId() {
-		fetch('/Url/Delete/' + idSelectedItem, {
+		fetch('/url/delete/?id=' + idSelectedItem, {
             method: "DELETE"
         });
 

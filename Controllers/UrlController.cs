@@ -8,6 +8,7 @@ using SubUrl.Service;
 
 namespace SubUrl.Controllers
 {
+    [Route("url")]
     public class UrlController : Controller
     {
         private readonly ILogger<UrlController> _logger;
@@ -17,7 +18,8 @@ namespace SubUrl.Controllers
             _logger = logger;
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet("list")]
+        public async Task<IActionResult> GetList()
         {
             using (AppDbContext db = new())
             {
@@ -27,13 +29,13 @@ namespace SubUrl.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("create")]
         public IActionResult Create()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<ActionResult<string>> Create([FromBody] UrlDTO urlDTO)
         {
             if (!ModelState.IsValid) return BadRequest("Link has been required!");
@@ -62,7 +64,7 @@ namespace SubUrl.Controllers
             }
         }
 
-        [HttpGet]
+        [HttpGet("update")]
         public async Task<IActionResult> Update(int? id)
         {
             if (id is null || id < 1) return BadRequest();
@@ -77,22 +79,28 @@ namespace SubUrl.Controllers
             }
         }
 
+        [Route("update")]
         public async Task<IActionResult> Update(Url url)
         {
-
             if (!ModelState.IsValid) return View(url);
 
             using (AppDbContext db = new())
             {
-                db.Url.Update(url);
+                Url? urlFromDb = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == url.Id);
+
+                if (urlFromDb is null) return NotFound();
+ 
+                urlFromDb.LongValue = url.LongValue;
+                urlFromDb.ShortValue = url.ShortValue;
+                urlFromDb.DateCreated = url.DateCreated;
 
                 await db.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(GetList));
             }
         }
 
-        [HttpDelete]
+        [HttpDelete("delete")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id is null || id < 1) return BadRequest();
@@ -112,6 +120,7 @@ namespace SubUrl.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        [Route("error")]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
