@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using SubUrl.Data;
 using SubUrl.Models;
 using SubUrl.Models.DTO;
+using SubUrl.Service;
 
 namespace SubUrl.Controllers
 {
@@ -46,7 +47,7 @@ namespace SubUrl.Controllers
                     db.Url.Remove(url);
                 }
 
-                string shortValue = urlDTO.LongValue.Length + new Random().Next(-10, 10) + "";
+                string shortValue = await UrlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
 
                 await db.Url.AddAsync(new()
                 {
