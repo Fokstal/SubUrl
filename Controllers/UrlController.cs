@@ -18,6 +18,25 @@ namespace SubUrl.Controllers
             _logger = logger;
         }
 
+        [HttpGet("{shortValue}")]
+        public async Task<IActionResult> Index(string? shortValue)
+        {
+            if (shortValue is null) return RedirectToAction(nameof(Create));
+
+            using (AppDbContext db = new())
+            {
+                Url? url = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
+
+                if (url is null) return NotFound();
+
+                url.FollowCount++;
+
+                await db.SaveChangesAsync();
+
+                return Redirect(url.LongValue);
+            }
+        }
+
         [HttpGet("list")]
         public async Task<IActionResult> GetList()
         {
@@ -60,7 +79,7 @@ namespace SubUrl.Controllers
 
                 await db.SaveChangesAsync();
 
-                return Created("Url", shortValue);
+                return Created("Url", "https://localhost:7020/url/" + shortValue);
             }
         }
 
@@ -89,7 +108,7 @@ namespace SubUrl.Controllers
                 Url? urlFromDb = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == url.Id);
 
                 if (urlFromDb is null) return NotFound();
- 
+
                 urlFromDb.LongValue = url.LongValue;
                 urlFromDb.ShortValue = url.ShortValue;
                 urlFromDb.DateCreated = url.DateCreated;
