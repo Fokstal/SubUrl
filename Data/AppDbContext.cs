@@ -7,14 +7,14 @@ namespace SubUrl.Data
     {
         public DbSet<Url> Url { get; set; } = null!;
 
-        public AppDbContext()
-        {
-            Database.EnsureCreatedAsync();
-        }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("Data Source=AppData/Database.db");
+            optionsBuilder.UseMySql
+            (
+                "server=localhost;user=root;password=pass1234;database=suburldb;", 
+                new MySqlServerVersion(new Version(8, 0, 31))
+            );
         }
     }
 }
