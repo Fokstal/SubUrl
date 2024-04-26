@@ -7,14 +7,9 @@ namespace SubUrl.Data
     {
         public DbSet<Url> Url { get; set; } = null!;
 
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            optionsBuilder.UseMySql
-            (
-                "server=localhost;user=root;password=pass1234;database=suburldb;", 
-                new MySqlServerVersion(new Version(8, 0, 31))
-            );
+            Database.EnsureCreated();
         }
     }
 }

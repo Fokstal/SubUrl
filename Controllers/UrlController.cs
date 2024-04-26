@@ -12,10 +12,15 @@ namespace SubUrl.Controllers
     public class UrlController : Controller
     {
         private readonly ILogger<UrlController> _logger;
+        private readonly AppDbContext _db;
+        private readonly UrlService _urlService;
 
-        public UrlController(ILogger<UrlController> logger)
+
+        public UrlController(ILogger<UrlController> logger, AppDbContext db)
         {
             _logger = logger;
+            _db = db;
+            _urlService = new(_db);
         }
 
         [HttpGet("{shortValue?}")]
@@ -23,29 +28,23 @@ namespace SubUrl.Controllers
         {
             if (shortValue is null) return RedirectToAction(nameof(Create));
 
-            using (AppDbContext db = new())
-            {
-                Url? url = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
+            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
 
-                if (url is null) return NotFound();
+            if (url is null) return NotFound();
 
-                url.FollowCount++;
+            url.FollowCount++;
 
-                await db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-                return Redirect(url.LongValue);
-            }
+            return Redirect(url.LongValue);
         }
 
         [HttpGet("list")]
         public async Task<IActionResult> GetList()
         {
-            using (AppDbContext db = new())
-            {
-                IEnumerable<Url> urlList = await db.Url.ToArrayAsync();
+            IEnumerable<Url> urlList = await _db.Url.ToArrayAsync();
 
-                return View(urlList);
-            }
+            return View(urlList);
         }
 
         [HttpGet("create")]
@@ -59,31 +58,28 @@ namespace SubUrl.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            using (AppDbContext db = new())
+            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.LongValue.ToLower() == urlDTO.LongValue.ToLower());
+
+            if (url is not null)
             {
-                Url? url = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.LongValue.ToLower() == urlDTO.LongValue.ToLower());
-
-                if (url is not null)
-                {
-                    db.Url.Remove(url);
-                }
-
-                string shortValue = await UrlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
-
-                await db.Url.AddAsync(new()
-                {
-                    LongValue = urlDTO.LongValue,
-                    ShortValue = shortValue,
-                    DateCreated = DateTime.Now,
-                });
-
-                await db.SaveChangesAsync();
-
-                return Created("Url", new
-                {
-                    LongValue = new string[]  { "https://localhost:7020/url/" + shortValue },
-                });
+                _db.Url.Remove(url);
             }
+
+            string shortValue = await _urlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
+
+            await _db.Url.AddAsync(new()
+            {
+                LongValue = urlDTO.LongValue,
+                ShortValue = shortValue,
+                DateCreated = DateTime.Now,
+            });
+
+            await _db.SaveChangesAsync();
+
+            return Created("Url", new
+            {
+                LongValue = new string[] { "https://localhost:7020/url/" + shortValue },
+            });
         }
 
         [HttpGet("update")]
@@ -91,14 +87,11 @@ namespace SubUrl.Controllers
         {
             if (id is null || id < 1) return BadRequest();
 
-            using (AppDbContext db = new())
-            {
-                Url? urlToUpdate = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
+            Url? urlToUpdate = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
 
-                if (urlToUpdate is null) return NotFound();
+            if (urlToUpdate is null) return NotFound();
 
-                return View(urlToUpdate);
-            }
+            return View(urlToUpdate);
         }
 
         [Route("update")]
@@ -106,20 +99,17 @@ namespace SubUrl.Controllers
         {
             if (!ModelState.IsValid) return View(url);
 
-            using (AppDbContext db = new())
-            {
-                Url? urlFromDb = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == url.Id);
+            Url? urlFromDb = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == url.Id);
 
-                if (urlFromDb is null) return NotFound();
+            if (urlFromDb is null) return NotFound();
 
-                urlFromDb.LongValue = url.LongValue;
-                urlFromDb.ShortValue = url.ShortValue;
-                urlFromDb.DateCreated = url.DateCreated;
+            urlFromDb.LongValue = url.LongValue;
+            urlFromDb.ShortValue = url.ShortValue;
+            urlFromDb.DateCreated = url.DateCreated;
 
-                await db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-                return RedirectToAction(nameof(GetList));
-            }
+            return RedirectToAction(nameof(GetList));
         }
 
         [HttpDelete("delete")]
@@ -127,18 +117,15 @@ namespace SubUrl.Controllers
         {
             if (id is null || id < 1) return BadRequest();
 
-            using (AppDbContext db = new())
-            {
-                Url? url = await db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
+            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
 
-                if (url is null) return NotFound();
+            if (url is null) return NotFound();
 
-                db.Url.Remove(url);
+            _db.Url.Remove(url);
 
-                await db.SaveChangesAsync();
+            await _db.SaveChangesAsync();
 
-                return RedirectToAction(nameof(Index));
-            }
+            return RedirectToAction(nameof(Index));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

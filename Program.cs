@@ -1,7 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using SubUrl.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+string connection = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddDbContext<AppDbContext>
+(
+    options => options.UseMySql
+        (
+            connection, 
+            new MySqlServerVersion(new Version(8, 0, 31))
+        ));
 
 var app = builder.Build();
 
