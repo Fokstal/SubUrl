@@ -84,7 +84,7 @@ namespace SubUrl.Controllers
 
             return Created("Url", new
             {
-                LongValue = new string[] { "https://localhost:7020/url/" + shortValue },
+                ShortValueLink = "https://localhost:7020/url/" + shortValue,
             });
         }
 

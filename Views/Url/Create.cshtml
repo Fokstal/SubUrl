@@ -68,18 +68,7 @@
         })
             .then(resp => resp.json())
             .then(data => {
-                let responseValue;
-
-                try
-                {
-                    responseValue = data.LongValue[0];
-                }
-                catch
-                {
-                    responseValue = data.longValue[0];
-                }
-
-                document.querySelector("#responseBox").value = responseValue;
+                document.querySelector("#responseBox").value = data.shortValueLink;
             })
             .catch(err => {
                 document.querySelector("#responseBox").value = err;
