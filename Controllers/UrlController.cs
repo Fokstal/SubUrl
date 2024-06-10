@@ -1,9 +1,11 @@
 using System.Diagnostics;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using SubUrl.Commands;
 using SubUrl.Data;
 using SubUrl.Models;
 using SubUrl.Models.DTO;
+using SubUrl.Queries;
 using SubUrl.Service;
 
 namespace SubUrl.Controllers
@@ -12,15 +14,14 @@ namespace SubUrl.Controllers
     public class UrlController : Controller
     {
         private readonly ILogger<UrlController> _logger;
-        private readonly AppDbContext _db;
         private readonly UrlService _urlService;
+        private readonly ISender _sender;
 
-
-        public UrlController(ILogger<UrlController> logger, AppDbContext db)
+        public UrlController(ILogger<UrlController> logger, AppDbContext db, ISender sender)
         {
             _logger = logger;
-            _db = db;
-            _urlService = new(_db);
+            _urlService = new(db);
+            _sender = sender;
         }
 
         [HttpGet("{shortValue?}")]
@@ -28,13 +29,11 @@ namespace SubUrl.Controllers
         {
             if (shortValue is null) return RedirectToAction(nameof(Create));
 
-            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
+            Url? url = await _sender.Send(new GetUrlByShortValueQuery(shortValue));
 
             if (url is null) return NotFound();
 
-            url.FollowCount++;
-
-            await _db.SaveChangesAsync();
+            await _sender.Send(new IncUrlFollowCountCommand(url));
 
             return Redirect(url.LongValue);
         }
@@ -42,9 +41,21 @@ namespace SubUrl.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> GetList()
         {
-            IEnumerable<Url> urlList = await _db.Url.ToArrayAsync();
+            IEnumerable<Url> urlList = await _sender.Send(new GetUrlListQuery());
 
             return View(urlList);
+        }
+
+        [HttpGet("{id:int}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            if (id < 1) return BadRequest();
+
+            Url? url = await _sender.Send(new GetUrlByIdQuery(id));
+
+            if (url is null) return NotFound();
+
+            return Ok(url);
         }
 
         [HttpGet("create")]
@@ -58,23 +69,18 @@ namespace SubUrl.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.LongValue.ToLower() == urlDTO.LongValue.ToLower());
+            Url? url = await _sender.Send(new GetUrlByLongValueQuery(urlDTO.LongValue));
 
             if (url is not null)
             {
-                _db.Url.Remove(url);
+                await _sender.Send(new RemoveUrlCommand(url));
             }
 
             string shortValue = await _urlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
 
-            await _db.Url.AddAsync(new()
-            {
-                LongValue = urlDTO.LongValue,
-                ShortValue = shortValue,
-                DateCreated = DateTime.Now,
-            });
+            Url urlToAdd = await _sender.Send(new CreateUrlCommand(urlDTO.LongValue, shortValue));
 
-            await _db.SaveChangesAsync();
+            await _sender.Send(new AddUrlCommand(urlToAdd));
 
             return Created("Url", new
             {
@@ -87,7 +93,7 @@ namespace SubUrl.Controllers
         {
             if (id is null || id < 1) return BadRequest();
 
-            Url? urlToUpdate = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
+            Url? urlToUpdate = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(id)));
 
             if (urlToUpdate is null) return NotFound();
 
@@ -95,19 +101,15 @@ namespace SubUrl.Controllers
         }
 
         [Route("update")]
-        public async Task<IActionResult> Update(Url url)
+        public async Task<IActionResult> Update(Url newUrl)
         {
-            if (!ModelState.IsValid) return View(url);
+            if (!ModelState.IsValid) return View(newUrl);
 
-            Url? urlFromDb = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == url.Id);
+            Url? urlToUpdate = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(newUrl.Id)));
 
-            if (urlFromDb is null) return NotFound();
+            if (urlToUpdate is null) return NotFound();
 
-            urlFromDb.LongValue = url.LongValue;
-            urlFromDb.ShortValue = url.ShortValue;
-            urlFromDb.DateCreated = url.DateCreated;
-
-            await _db.SaveChangesAsync();
+            await _sender.Send(new UpdateUrlCommand(urlToUpdate, newUrl));
 
             return RedirectToAction(nameof(GetList));
         }
@@ -117,13 +119,11 @@ namespace SubUrl.Controllers
         {
             if (id is null || id < 1) return BadRequest();
 
-            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.Id == id);
+            Url? urlToRemove = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(id)));
 
-            if (url is null) return NotFound();
+            if (urlToRemove is null) return NotFound();
 
-            _db.Url.Remove(url);
-
-            await _db.SaveChangesAsync();
+            await _sender.Send(new RemoveUrlCommand(urlToRemove));
 
             return RedirectToAction(nameof(Index));
         }

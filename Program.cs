@@ -4,6 +4,7 @@ using SubUrl.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
 builder.Services.AddControllersWithViews();
 
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
