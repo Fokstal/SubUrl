@@ -69,13 +69,6 @@ namespace SubUrl.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            Url? url = await _sender.Send(new GetUrlByLongValueQuery(urlDTO.LongValue));
-
-            if (url is not null)
-            {
-                await _sender.Send(new RemoveUrlCommand(url));
-            }
-
             string shortValue = await _urlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
 
             Url urlToAdd = await _sender.Send(new CreateUrlCommand(urlDTO.LongValue, shortValue));
