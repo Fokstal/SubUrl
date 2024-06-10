@@ -10,7 +10,6 @@ using SubUrl.Service;
 
 namespace SubUrl.Controllers
 {
-    [Route("url")]
     public class UrlController : Controller
     {
         private readonly ILogger<UrlController> _logger;
@@ -77,7 +76,7 @@ namespace SubUrl.Controllers
 
             return Created("Url", new
             {
-                ShortValueLink = "https://localhost:7020/url/" + shortValue,
+                ShortValueLink = "https://localhost:7020/" + shortValue,
             });
         }
 

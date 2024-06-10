@@ -106,7 +106,7 @@
 	}
 
 	function copyToClipboardLinkByValue(value) {
-		navigator.clipboard.writeText("https://localhost:7020/url/" + value).then(function () {
+		navigator.clipboard.writeText("https://localhost:7020/" + value).then(function () {
 			showTextAfterCopyInTime("Link in clipboard!", 2000);
 		}, function (err) {
 			showTextAfterCopyInTime("Error!", 2000);
