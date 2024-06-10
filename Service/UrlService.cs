@@ -7,6 +7,7 @@ namespace SubUrl.Service
     public class UrlService
     {
         private readonly AppDbContext _db;
+        private readonly int shortValueLength = 6;
 
         public UrlService(AppDbContext db)
         {
@@ -15,15 +16,13 @@ namespace SubUrl.Service
 
         public async Task<string> GenerateUniqueShortValueByLongValue(string longValue)
         {
-            string shortValue = HashWorker.GenerateSHA512HashInLengthWithSalt(longValue, 6);
+            string shortValue =  Guid.NewGuid().ToString()[..shortValueLength];
 
             Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
 
-            while (url is not null)
+            if (url is not null)
             {
-                shortValue = HashWorker.GenerateSHA512HashInLengthWithSalt(shortValue, 6);
-
-                url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
+                await GenerateUniqueShortValueByLongValue(longValue);
             }
 
             return shortValue;
