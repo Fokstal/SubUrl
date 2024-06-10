@@ -9,11 +9,8 @@ builder.Services.AddControllersWithViews();
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<AppDbContext>
 (
-    options => options.UseMySql
-        (
-            connection, 
-            new MySqlServerVersion(new Version(8, 0, 31))
-        ));
+    options => options.UseSqlite(connection)
+);
 
 var app = builder.Build();
 
