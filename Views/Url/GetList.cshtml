@@ -116,7 +116,7 @@
 	}
 
 	function deleteItemBySelectedId() {
-		fetch('/Url/Delete/?id=' + idSelectedItem, {
+		fetch('/Url/Remove/?id=' + idSelectedItem, {
 			method: "DELETE"
 		});
 
@@ -124,7 +124,7 @@
 	}
 
 	function deleteList() {
-		fetch('/Url/DeleteList/', {
+		fetch('/Url/RemoveList/', {
 			method: "DELETE"
 		});
 

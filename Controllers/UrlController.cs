@@ -109,8 +109,8 @@ namespace SubUrl.Controllers
             return RedirectToAction(nameof(GetList));
         }
 
-        [HttpDelete(Name = "Delete")]
-        public async Task<IActionResult> Delete(int? id)
+        [HttpDelete(Name = "Remove")]
+        public async Task<IActionResult> Remove(int? id)
         {
             if (id is null || id < 1) return BadRequest();
 
@@ -123,8 +123,8 @@ namespace SubUrl.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpDelete(Name = "DeleteList")]
-        public async Task<IActionResult> DeleteList()
+        [HttpDelete(Name = "RemoveList")]
+        public async Task<IActionResult> RemoveList()
         {
             await _sender.Send(new RemoveUrlListCommand());
 
