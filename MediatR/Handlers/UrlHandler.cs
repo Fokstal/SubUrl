@@ -15,6 +15,7 @@ namespace SubUrl.MediatR.Handlers
         IRequestHandler<GetUrlListQuery, UrlEntity[]>,
         IRequestHandler<IncUrlFollowCountCommand>,
         IRequestHandler<RemoveUrlCommand>,
+        IRequestHandler<RemoveUrlListCommand>,
         IRequestHandler<UpdateUrlCommand>
     {
         private readonly UrlRepository _urlRepo;
@@ -55,6 +56,16 @@ namespace SubUrl.MediatR.Handlers
 
         public async Task Handle(RemoveUrlCommand request, CancellationToken cancellationToken)
             => await _urlRepo.RemoveAsync(request.UrlToRemove);
+
+        public async Task Handle(RemoveUrlListCommand request, CancellationToken cancellationToken)
+        {
+            UrlEntity[] urlList = await _urlRepo.GetListAsync();
+
+            foreach (UrlEntity url in urlList)
+            {
+                await _urlRepo.RemoveAsync(url);
+            }
+        }
 
         public async Task Handle(UpdateUrlCommand request, CancellationToken cancellationToken)
             => await _urlRepo.UpdateAsync(request.UrlToUpdate, request.UrlDTO);

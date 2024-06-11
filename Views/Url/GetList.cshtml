@@ -10,6 +10,9 @@
 			<a asp-action="Create" class="btn btn-primary">
 				<i class="fa-solid fa-plus"></i> &nbsp; Создание ссылки
 			</a>
+			<a class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteListModal">
+				<i class="fa-regular fa-trash-can"></i> &nbsp; Очистить
+			</a>
 		</div>
 	</div>
 
@@ -73,16 +76,31 @@
 	<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLebel" aria-hidden="true">
 		<div class="modal-dialog modal-dialog-centered">
 			<div class="modal-content">
-				<div class="modal-header">
-				</div>
 				<div class="modal-body text-center">
-					<h5>
+					<h4>
 						Удалить этот элемент?
-					</h5>
+					</h4>
 				</div>
 				<div class="modal-footer justify-content-center">
 					<button type="button" class="btn btn-danger" onclick="deleteItemBySelectedId()"
 						data-bs-dismiss="modal">Удалить</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="deleteListModal" tabindex="-1" aria-labelledby="deleteModalLebel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-body text-center">
+					<h4>
+						Очистить список ссылок?
+					</h4>
+				</div>
+				<div class="modal-footer justify-content-center">
+					<button type="button" class="btn btn-danger" onclick="deleteList()"
+						data-bs-dismiss="modal">Очистить</button>
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
 				</div>
 			</div>
@@ -105,6 +123,14 @@
 		setInterval(func => { location.reload() }, 100);
 	}
 
+	function deleteList() {
+		fetch('/Url/DeleteList/', {
+			method: "DELETE"
+		});
+
+		setInterval(func => { location.reload() }, 100);
+	}
+
 	function copyToClipboardLinkByValue(value) {
 		navigator.clipboard.writeText("https://localhost:7020/" + value).then(function () {
 			showTextAfterCopyInTime("Ссылка скопирована!", 2000);
@@ -114,12 +140,12 @@
 	}
 
 	function showTextAfterCopyInTime(text, ms) {
-        let afterCopyTextSpan = document.querySelector("#afterCopyText");
+		let afterCopyTextSpan = document.querySelector("#afterCopyText");
 
-        afterCopyTextSpan.innerHTML = text;
+		afterCopyTextSpan.innerHTML = text;
 
-        afterCopyTextSpan.style.visibility = "visible";
+		afterCopyTextSpan.style.visibility = "visible";
 
-        setTimeout(() => afterCopyTextSpan.style.visibility = "hidden", ms)
-    }
+		setTimeout(() => afterCopyTextSpan.style.visibility = "hidden", ms)
+	}
 </script>
