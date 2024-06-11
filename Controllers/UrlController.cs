@@ -5,6 +5,7 @@ using SubUrl.Commands;
 using SubUrl.Data;
 using SubUrl.Models;
 using SubUrl.Models.DTO;
+using SubUrl.Models.Entities;
 using SubUrl.Queries;
 using SubUrl.Service;
 
@@ -28,7 +29,7 @@ namespace SubUrl.Controllers
         {
             if (shortValue is null) return RedirectToAction(nameof(Create));
 
-            Url? url = await _sender.Send(new GetUrlByShortValueQuery(shortValue));
+            UrlEntity? url = await _sender.Send(new GetUrlByShortValueQuery(shortValue));
 
             if (url is null) return NotFound();
 
@@ -38,19 +39,19 @@ namespace SubUrl.Controllers
         }
 
         [HttpGet("list")]
-        public async Task<IActionResult> GetList()
+        public async Task<ActionResult<IEnumerable<UrlEntity>>> GetList()
         {
-            IEnumerable<Url> urlList = await _sender.Send(new GetUrlListQuery());
+            IEnumerable<UrlEntity> urlList = await _sender.Send(new GetUrlListQuery());
 
             return View(urlList);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<ActionResult<UrlEntity>> Get(int id)
         {
             if (id < 1) return BadRequest();
 
-            Url? url = await _sender.Send(new GetUrlByIdQuery(id));
+            UrlEntity? url = await _sender.Send(new GetUrlByIdQuery(id));
 
             if (url is null) return NotFound();
 
@@ -63,14 +64,14 @@ namespace SubUrl.Controllers
             return View();
         }
 
-        [HttpPost("create")]
-        public async Task<ActionResult<string>> Create([FromBody] UrlDTO urlDTO)
+        [HttpPost(Name = "Create")]
+        public async Task<ActionResult<string>> Create([FromBody] UrlCreateDTO urlDTO)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             string shortValue = await _urlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
 
-            Url urlToAdd = await _sender.Send(new CreateUrlCommand(urlDTO.LongValue, shortValue));
+            UrlEntity urlToAdd = await _sender.Send(new CreateUrlCommand(urlDTO.LongValue, shortValue));
 
             await _sender.Send(new AddUrlCommand(urlToAdd));
 
@@ -85,23 +86,31 @@ namespace SubUrl.Controllers
         {
             if (id is null || id < 1) return BadRequest();
 
-            Url? urlToUpdate = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(id)));
+            UrlEntity? urlToUpdate = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(id)));
 
             if (urlToUpdate is null) return NotFound();
 
-            return View(urlToUpdate);
+            UrlDTO urlDTO = new()
+            {
+                Id = urlToUpdate.Id,
+                ShortValue = urlToUpdate.ShortValue,
+                LongValue = urlToUpdate.LongValue,
+                DateCreated = urlToUpdate.DateCreated,
+            };
+
+            return View(urlDTO);
         }
 
         [Route("update")]
-        public async Task<IActionResult> Update(Url newUrl)
+        public async Task<IActionResult> Update(UrlDTO urlDTO)
         {
-            if (!ModelState.IsValid) return View(newUrl);
+            if (!ModelState.IsValid) return View(urlDTO);
 
-            Url? urlToUpdate = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(newUrl.Id)));
+            UrlEntity? urlToUpdate = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(urlDTO.Id)));
 
             if (urlToUpdate is null) return NotFound();
 
-            await _sender.Send(new UpdateUrlCommand(urlToUpdate, newUrl));
+            await _sender.Send(new UpdateUrlCommand(urlToUpdate, urlDTO));
 
             return RedirectToAction(nameof(GetList));
         }
@@ -111,7 +120,7 @@ namespace SubUrl.Controllers
         {
             if (id is null || id < 1) return BadRequest();
 
-            Url? urlToRemove = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(id)));
+            UrlEntity? urlToRemove = await _sender.Send(new GetUrlByIdQuery(Convert.ToInt32(id)));
 
             if (urlToRemove is null) return NotFound();
 

@@ -1,11 +1,12 @@
 using MediatR;
-using SubUrl.Models;
+using SubUrl.Models.DTO;
+using SubUrl.Models.Entities;
 
 namespace SubUrl.Commands
 {
-    public record CreateUrlCommand(string LongValue, string ShortValue) : IRequest<Url>;
-    public record AddUrlCommand(Url UrlToAdd) : IRequest;
-    public record UpdateUrlCommand(Url UrlToUpdate, Url NewUrl) : IRequest;
-    public record RemoveUrlCommand(Url UrlToRemove) : IRequest;
-    public record IncUrlFollowCountCommand(Url Url) : IRequest;
+    public record CreateUrlCommand(string LongValue, string ShortValue) : IRequest<UrlEntity>;
+    public record AddUrlCommand(UrlEntity UrlToAdd) : IRequest;
+    public record UpdateUrlCommand(UrlEntity UrlToUpdate, UrlDTO UrlDTO) : IRequest;
+    public record RemoveUrlCommand(UrlEntity UrlToRemove) : IRequest;
+    public record IncUrlFollowCountCommand(UrlEntity Url) : IRequest;
 }

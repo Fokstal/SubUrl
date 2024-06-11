@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using SubUrl.Data;
-using SubUrl.Models;
+using SubUrl.Models.Entities;
 
 namespace SubUrl.Service
 {
@@ -18,7 +18,7 @@ namespace SubUrl.Service
         {
             string shortValue =  Guid.NewGuid().ToString()[..shortValueLength];
 
-            Url? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
+            UrlEntity? url = await _db.Url.FirstOrDefaultAsync(urlDb => urlDb.ShortValue == shortValue);
 
             if (url is not null)
             {

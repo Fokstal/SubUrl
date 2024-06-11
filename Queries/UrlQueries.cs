@@ -1,10 +1,10 @@
 using MediatR;
-using SubUrl.Models;
+using SubUrl.Models.Entities;
 
 namespace SubUrl.Queries
 {
-    public record GetUrlListQuery() : IRequest<IEnumerable<Url>>;
-    public record GetUrlByIdQuery(int Id) : IRequest<Url?>;
-    public record GetUrlByLongValueQuery(string LongValue) : IRequest<Url?>;
-    public record GetUrlByShortValueQuery(string ShortValue) : IRequest<Url?>;
+    public record GetUrlListQuery() : IRequest<IEnumerable<UrlEntity>>;
+    public record GetUrlByIdQuery(int Id) : IRequest<UrlEntity?>;
+    public record GetUrlByLongValueQuery(string LongValue) : IRequest<UrlEntity?>;
+    public record GetUrlByShortValueQuery(string ShortValue) : IRequest<UrlEntity?>;
 }

@@ -2,12 +2,12 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using SubUrl.Commands;
 using SubUrl.Data;
-using SubUrl.Models;
+using SubUrl.Models.Entities;
 using SubUrl.Queries;
 
 namespace SubUrl.Handlers
 {
-    public class GetUrlListHandler : IRequestHandler<GetUrlListQuery, IEnumerable<Url>>
+    public class GetUrlListHandler : IRequestHandler<GetUrlListQuery, IEnumerable<UrlEntity>>
     {
         private readonly AppDbContext _db;
 
@@ -16,11 +16,11 @@ namespace SubUrl.Handlers
             _db = db;
         }
 
-        public async Task<IEnumerable<Url>> Handle(GetUrlListQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<UrlEntity>> Handle(GetUrlListQuery request, CancellationToken cancellationToken)
             => await _db.Url.ToListAsync();
     }
 
-    public class GetUrlByIdHandler : IRequestHandler<GetUrlByIdQuery, Url?>
+    public class GetUrlByIdHandler : IRequestHandler<GetUrlByIdQuery, UrlEntity?>
     {
         private readonly AppDbContext _db;
 
@@ -29,11 +29,11 @@ namespace SubUrl.Handlers
             _db = db;
         }
 
-        public async Task<Url?> Handle(GetUrlByIdQuery request, CancellationToken cancellationToken)
+        public async Task<UrlEntity?> Handle(GetUrlByIdQuery request, CancellationToken cancellationToken)
             => await _db.Url.FirstOrDefaultAsync(u => u.Id == request.Id);
     }
 
-    public class GetUrlByLongValueHandler : IRequestHandler<GetUrlByLongValueQuery, Url?>
+    public class GetUrlByLongValueHandler : IRequestHandler<GetUrlByLongValueQuery, UrlEntity?>
     {
         private readonly AppDbContext _db;
 
@@ -42,11 +42,11 @@ namespace SubUrl.Handlers
             _db = db;
         }
 
-        public async Task<Url?> Handle(GetUrlByLongValueQuery request, CancellationToken cancellationToken)
+        public async Task<UrlEntity?> Handle(GetUrlByLongValueQuery request, CancellationToken cancellationToken)
             => await _db.Url.FirstOrDefaultAsync(u => u.LongValue.ToLower() == request.LongValue.ToLower());
     }
 
-    public class GetUrlByShortValueHandler : IRequestHandler<GetUrlByShortValueQuery, Url?>
+    public class GetUrlByShortValueHandler : IRequestHandler<GetUrlByShortValueQuery, UrlEntity?>
     {
         private readonly AppDbContext _db;
 
@@ -55,11 +55,11 @@ namespace SubUrl.Handlers
             _db = db;
         }
 
-        public async Task<Url?> Handle(GetUrlByShortValueQuery request, CancellationToken cancellationToken)
+        public async Task<UrlEntity?> Handle(GetUrlByShortValueQuery request, CancellationToken cancellationToken)
             => await _db.Url.FirstOrDefaultAsync(u => u.ShortValue.ToLower() == request.ShortValue.ToLower());
     }
 
-    public class CreateUrlHandler : IRequestHandler<CreateUrlCommand, Url>
+    public class CreateUrlHandler : IRequestHandler<CreateUrlCommand, UrlEntity>
     {
         private readonly AppDbContext _db;
 
@@ -68,9 +68,9 @@ namespace SubUrl.Handlers
             _db = db;
         }
 
-        public async Task<Url> Handle(CreateUrlCommand request, CancellationToken cancellationToken)
+        public async Task<UrlEntity> Handle(CreateUrlCommand request, CancellationToken cancellationToken)
         {
-            Url url = new()
+            UrlEntity url = new()
             {
                 LongValue = request.LongValue,
                 ShortValue = request.ShortValue,
@@ -111,9 +111,9 @@ namespace SubUrl.Handlers
 
         public async Task Handle(UpdateUrlCommand request, CancellationToken cancellationToken)
         {
-            request.UrlToUpdate.LongValue = request.NewUrl.LongValue;
-            request.UrlToUpdate.ShortValue = request.NewUrl.ShortValue;
-            request.UrlToUpdate.DateCreated = request.NewUrl.DateCreated;
+            request.UrlToUpdate.LongValue = request.UrlDTO.LongValue;
+            request.UrlToUpdate.ShortValue = request.UrlDTO.ShortValue;
+            request.UrlToUpdate.DateCreated = request.UrlDTO.DateCreated;
 
             await _db.SaveChangesAsync();
 

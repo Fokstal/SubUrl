@@ -1,11 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using SubUrl.Models;
+using SubUrl.Models.Entities;
 
 namespace SubUrl.Data
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Url> Url { get; set; } = null!;
+        public DbSet<UrlEntity> Url { get; set; } = null!;
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
