@@ -1,7 +1,7 @@
 using MediatR;
 using SubUrl.Models.Entities;
 
-namespace SubUrl.Queries
+namespace SubUrl.MediatR.Queries
 {
     public record GetUrlListQuery() : IRequest<IEnumerable<UrlEntity>>;
     public record GetUrlByIdQuery(int Id) : IRequest<UrlEntity?>;

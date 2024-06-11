@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SubUrl.Commands;
 using SubUrl.Data;
 using SubUrl.Models;
 using SubUrl.Models.DTO;
 using SubUrl.Models.Entities;
-using SubUrl.Queries;
+using SubUrl.MediatR.Commands;
+using SubUrl.MediatR.Queries;
 using SubUrl.Service;
 
 namespace SubUrl.Controllers

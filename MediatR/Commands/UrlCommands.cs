@@ -2,7 +2,7 @@ using MediatR;
 using SubUrl.Models.DTO;
 using SubUrl.Models.Entities;
 
-namespace SubUrl.Commands
+namespace SubUrl.MediatR.Commands
 {
     public record CreateUrlCommand(string LongValue, string ShortValue) : IRequest<UrlEntity>;
     public record AddUrlCommand(UrlEntity UrlToAdd) : IRequest;

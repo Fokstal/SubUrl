@@ -1,11 +1,11 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using SubUrl.Commands;
 using SubUrl.Data;
 using SubUrl.Models.Entities;
-using SubUrl.Queries;
+using SubUrl.MediatR.Commands;
+using SubUrl.MediatR.Queries;
 
-namespace SubUrl.Handlers
+namespace SubUrl.MediatR.Handlers
 {
     public class GetUrlListHandler : IRequestHandler<GetUrlListQuery, IEnumerable<UrlEntity>>
     {
