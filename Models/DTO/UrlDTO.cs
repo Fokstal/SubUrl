@@ -14,8 +14,5 @@ namespace SubUrl.Models.DTO
         [MinLength(6)]
         [MaxLength(6)]
         public string ShortValue { get; set; } = null!;
-
-        [Required]
-        public DateTime DateCreated { get; set; }
     }
 }

@@ -95,7 +95,6 @@ namespace SubUrl.Controllers
                 Id = urlToUpdate.Id,
                 ShortValue = urlToUpdate.ShortValue,
                 LongValue = urlToUpdate.LongValue,
-                DateCreated = urlToUpdate.DateCreated,
             };
 
             return View(urlDTO);

@@ -113,7 +113,7 @@ namespace SubUrl.MediatR.Handlers
         {
             request.UrlToUpdate.LongValue = request.UrlDTO.LongValue;
             request.UrlToUpdate.ShortValue = request.UrlDTO.ShortValue;
-            request.UrlToUpdate.DateCreated = request.UrlDTO.DateCreated;
+            request.UrlToUpdate.DateCreated = DateTime.Now;
 
             await _db.SaveChangesAsync();
 
