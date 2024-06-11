@@ -7,20 +7,17 @@ using SubUrl.Models.DTO;
 using SubUrl.Models.Entities;
 using SubUrl.MediatR.Commands;
 using SubUrl.MediatR.Queries;
-using SubUrl.Service;
 
 namespace SubUrl.Controllers
 {
     public class UrlController : Controller
     {
         private readonly ILogger<UrlController> _logger;
-        private readonly UrlService _urlService;
         private readonly ISender _sender;
 
         public UrlController(ILogger<UrlController> logger, AppDbContext db, ISender sender)
         {
             _logger = logger;
-            _urlService = new(db);
             _sender = sender;
         }
 
@@ -69,15 +66,13 @@ namespace SubUrl.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            string shortValue = await _urlService.GenerateUniqueShortValueByLongValue(urlDTO.LongValue);
-
-            UrlEntity urlToAdd = await _sender.Send(new CreateUrlCommand(urlDTO.LongValue, shortValue));
+            UrlEntity urlToAdd = await _sender.Send(new CreateUrlCommand(urlDTO));
 
             await _sender.Send(new AddUrlCommand(urlToAdd));
 
             return Created("Url", new
             {
-                ShortValueLink = "https://localhost:7020/" + shortValue,
+                ShortValueLink = "https://localhost:7020/" + urlToAdd.ShortValue,
             });
         }
 
@@ -114,7 +109,7 @@ namespace SubUrl.Controllers
             return RedirectToAction(nameof(GetList));
         }
 
-        [HttpDelete("delete")]
+        [HttpDelete(Name = "delete")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id is null || id < 1) return BadRequest();

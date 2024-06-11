@@ -1,9 +1,7 @@
 namespace SubUrl.Models.Entities
 {
-    public class UrlEntity
+    public class UrlEntity : Entity
     {
-        public int Id { get; set; }
-
         public string LongValue { get; set; } = null!;
 
         public string ShortValue { get; set; } = null!;
