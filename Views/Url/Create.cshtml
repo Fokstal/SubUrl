@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="form-group row py-2">
                 <div class="offset-3 col-6">
-                    <input id="longValueBox" asp-for="LongValue" class="form-control" />
+                    <input id="longValueBox" asp-for="LongValue" class="form-control" placeholder="https://site.net"/>
                 </div>
                 <div class="col-3">
                     <span asp-validation-for="LongValue" class="text-danger"></span>
@@ -17,7 +17,7 @@
             </div>
             <div class="form-group row py-4">
                 <div class="offset-3 col-4">
-                    <input id="responseBox" class="form-control" readonly />
+                    <input id="responseBox" class="form-control" readonly placeholder="short link"/>
                 </div>
                 <div class="col-1">
                     <button id="copyBtn" type="button" class="btn btn-outline-dark" onclick="copyToClipboardResponse()">
@@ -54,8 +54,16 @@
 }
 
 <script>
+    let longValueBox = document.querySelector("#longValueBox");
+
+    longValueBox.addEventListener('focus', function () {
+        if (this.value.length === 0) {
+            this.value = 'https://';
+        }
+    });
+
     function createNewUrl() {
-        let longValue = document.querySelector("#longValueBox").value;
+        let longValue = longValueBox.value;
 
         fetch("/Url/Create", {
             method: "POST",

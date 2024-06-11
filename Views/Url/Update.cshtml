@@ -18,7 +18,7 @@
                         <label asp-for="LongValue"></label>
                     </div>
                     <div class="col-6">
-                        <input asp-for="LongValue" class="form-control" />
+                        <input id="longValueBox" asp-for="LongValue" class="form-control" placeholder="https://site.net"/>
                     </div>
                     <div class="col-3">
                         <span asp-validation-for="LongValue" class="text-danger"></span>
@@ -73,3 +73,13 @@
         <partial name="_ValidationScriptsPartial" />
     }
 }
+
+<script>
+    let longValueBox = document.querySelector("#longValueBox");
+
+    longValueBox.addEventListener('focus', function () {
+        if (this.value.length === 0) {
+            this.value = 'https://';
+        }
+    }); 
+</script>
