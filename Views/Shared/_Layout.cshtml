@@ -25,31 +25,21 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home"
-                                asp-action="Privacy">Privacy</a>
-                        </li>
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                Link Managment
+                                Менеджер
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Url" asp-action="Create">
-                                        <i class="fa-solid fa-circle-plus"></i> &nbsp; Create link
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Url" asp-action="GetList">
-                                        <i class="fa-solid fa-list-ol"></i> &nbsp; Url list
+                            <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
+                                <li>
+                                    <a class="dropdown-item text-dark" asp-controller="Url" asp-action="Create">
+                                        <i class="fa-solid fa-circle-plus"></i> &nbsp; Создание ссылки
                                     </a>
                                 </li>
                                 <li>
-                                    <hr class="dropdown-divider">
+                                    <a class="dropdown-item text-dark" asp-controller="Url" asp-action="GetList">
+                                        <i class="fa-solid fa-list-ol"></i> &nbsp; Список ссылок
+                                    </a>
                                 </li>
                             </ul>
                         </li>
@@ -65,8 +55,8 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - SubUrl - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; 2024 - SubUrl - powered by <a class="text-decoration-none text-success" target="_blank" href="https://github.com/Fokstal">Fokstal</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

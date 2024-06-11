@@ -6,13 +6,14 @@ namespace SubUrl.Models.DTO
     {
         public int Id { get; set; }
 
-        [Required]
-        [RegularExpression(@"^(http(s)?://)?([\w-]+\.)+[\w-]+(/[\w- ;,./?%&=]*)?$", ErrorMessage = "Url is not correct!")]
+        [Display(Name = "Ссылка")]
+        [Required(ErrorMessage = "Введите ссылку!")]
+        [RegularExpression(@"^(http(s)?://)?([\w-]+\.)+[\w-]+(/[\w- ;,./?%&=]*)?$", ErrorMessage = "Ссылка неправильная!")]
         public string LongValue { get; set; } = null!;
 
-        [Required]
-        [MinLength(6)]
-        [MaxLength(6)]
+        [Display(Name = "Сокращение")]
+        [Required(ErrorMessage = "Введите сокращение!")]
+        [StringLength(6, MinimumLength = 6, ErrorMessage = "Длина сокращения должна быть 6 символов!")]
         public string ShortValue { get; set; } = null!;
     }
 }

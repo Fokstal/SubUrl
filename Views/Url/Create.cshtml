@@ -3,13 +3,13 @@
 <div class="border p-3">
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group row">
-        <h2 class="text-primary text-center pb-5">Create the Url</h2>
+        <h2 class="text-primary text-center pb-5">Создание ссылки</h2>
     </div>
     <div class="row">
         <div class="col-12">
             <div class="form-group row py-2">
                 <div class="offset-3 col-6">
-                    <input id="longValueBox" asp-for="LongValue" class="form-control" placeholder="https://site.net"/>
+                    <input id="longValueBox" asp-for="LongValue" class="form-control" placeholder="https://site.net" />
                 </div>
                 <div class="col-3">
                     <span asp-validation-for="LongValue" class="text-danger"></span>
@@ -17,7 +17,7 @@
             </div>
             <div class="form-group row py-4">
                 <div class="offset-3 col-4">
-                    <input id="responseBox" class="form-control" readonly placeholder="short link"/>
+                    <input id="responseBox" class="form-control" readonly placeholder="Сокращенная ссылка" />
                 </div>
                 <div class="col-1">
                     <button id="copyBtn" type="button" class="btn btn-outline-dark" onclick="copyToClipboardResponse()">
@@ -30,12 +30,12 @@
                 <div class="offset-4 col-4 row">
                     <div class="col">
                         <button type="button" class="btn btn-success w-100" onclick="createNewUrl()">
-                            <i class="fa-regular fa-circle-check"></i> &nbsp; Create
+                            <i class="fa-regular fa-circle-check"></i> &nbsp; Создать
                         </button>
                     </div>
                     <div class="col">
                         <a asp-action="GetList" class="btn btn-warning w-100">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i> &nbsp; To Url list
+                            <i class="fa-solid fa-arrow-right-from-bracket"></i> &nbsp; Список ссылок
                         </a>
                     </div>
                 </div>
@@ -55,6 +55,7 @@
 
 <script>
     let longValueBox = document.querySelector("#longValueBox");
+    let responseBox = document.querySelector("#responseBox");
 
     longValueBox.addEventListener('focus', function () {
         if (this.value.length === 0) {
@@ -73,21 +74,27 @@
             body: JSON.stringify({
                 "longValue": longValue,
             }),
-        })
+            })
             .then(resp => resp.json())
             .then(data => {
-                document.querySelector("#responseBox").value = data.shortValueLink;
+                if (data.shortValueLink === undefined) {
+                    responseBox.placeholder = data.LongValue;
+
+                    return;
+                }
+
+                responseBox.value = data.shortValueLink;
             })
-            .catch(err => {
-                document.querySelector("#responseBox").value = err;
+            .catch (err => {
+                responseBox.value = err;
             })
     }
 
     function copyToClipboardResponse() {
-        navigator.clipboard.writeText(document.querySelector("#responseBox").value).then(function () {
-            showTextAfterCopyInTime("Link in clipboard!", 2000);
+        navigator.clipboard.writeText(responseBox.value).then(function () {
+            showTextAfterCopyInTime("Ссылка скопирована!", 2000);
         }, function (err) {
-            showTextAfterCopyInTime("Error!", 2000);
+            showTextAfterCopyInTime("Ошибка!", 2000);
         });
     }
 

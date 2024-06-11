@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations;
 namespace SubUrl.Models.DTO
 {
     public class UrlCreateDTO
-    {   
-        [Required(ErrorMessage = "Link is required!")]
-        [RegularExpression(@"^(http(s)?://)?([\w-]+\.)+[\w-]+(/[\w- ;,./?%&=]*)?$", ErrorMessage = "Url is not correct!")]
+    {
+        [Display(Name = "Ссылка")]
+        [Required(ErrorMessage = "Введите ссылку!")]
+        [RegularExpression(@"^(http(s)?://)?([\w-]+\.)+[\w-]+(/[\w- ;,./?%&=]*)?$", ErrorMessage = "Ссылка неправильная!")]
         public string LongValue { get; set; } = null!;
     }
 }
